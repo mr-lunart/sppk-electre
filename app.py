@@ -1,29 +1,31 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-
 df = pd.read_csv('kliknklik_gaming_laptop_cleaned.csv')
 
-# columns_to_drop = ['Garansi', 'Warna', 'Microsoft Office','Dimensi','Berat']
-# columns_to_drop = [col for col in columns_to_drop if col in df.columns]
-# data = df.drop(columns_to_drop, axis=1)
+def set_analisa():
+   st.session_state['analisa'] = True
 
-# st.dataframe(df)
+if 'analisa' not in st.session_state:
+    st.session_state['analisa'] = False
 
-for harga in df['Harga']:
-   harga = "test"
-   st.write(harga)
-
+st.title("ELECTRE SISTEM V0.1")
+st.html('<h3>Input Budget</h3>')
 with st.form("my_form"):
-   st.text_input("VGA", key="vga")
-   st.text_input("Proccessor", key="proc")
-   st.text_input("Penyimpanan", key="storage")
-   st.text_input("Ram", key="ram")
-   st.text_input("Tipe Penyimpanan", key="storageType")
-   st.text_input("Tipe Layar", key="screen")
-   st.text_input("Ukuran Layar", key="screenSize")
-   st.text_input("Warna", key="color")
-   st.text_input("Sistem Operasi", key="sistem")
-   st.form_submit_button('Submit')
+   budget = st.text_input("Budget", key="budget",)
+   submit = st.form_submit_button('Submit')
+   
+st.divider()
 
-st.write()
+if submit == True:
+   query = df.query('Harga <'+str(budget))
+   st.dataframe(query)
+   st.button('Analisa',key='analisa',on_click = set_analisa)
+
+if st.session_state.analisa == True:
+   st.html('<h3>Analisa ELECTRE</h3>')
+   query = df.query('Harga <'+str(st.session_state.budget))
+   st.dataframe(query)
+
+
+
